@@ -17,7 +17,7 @@ public class SendMessageUtil {
     public Boolean testSms(String code, String phoneNumber, Map<String,Object> params){
         // 指定地域名称 短信API的就是 cn-hangzhou 不能改变  后边填写您的  accessKey 和 accessKey Secret
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou",
-                "LTAI4Fc7cYF3ZbKVm7yH8KgF", "kq4MXwpz4bEK2Qrm8K3C90OBH6eS9j");
+                "***", "***");
         IAcsClient client = new DefaultAcsClient(profile);
 
         // 创建通用的请求对象
@@ -35,7 +35,7 @@ public class SendMessageUtil {
         // 要给哪个手机号发送短信  指定手机
         request.putQueryParameter("PhoneNumbers", phoneNumber);
         // 您的申请签名 需要申请 目前把惠工云改了就不会发送验证码了
-        request.putQueryParameter("SignName", "惠工云");
+        request.putQueryParameter("SignName", "***");
         // 您申请的模板 code
         request.putQueryParameter("TemplateCode", code);
 
