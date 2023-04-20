@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toast.fuchuang.mapper.UserAccountMapper">
+    
+    <resultMap type="UserAccount" id="UserAccountResult">
+        <result property="userid"    column="userId"    />
+        <result property="accountid"    column="accountId"    />
+        <result property="accountname"    column="accountName"    />
+        <result property="info"    column="info"    />
+    </resultMap>
+
+    <sql id="selectUserAccountVo">
+        select userId, accountId, accountName, info from user_account
+    </sql>
+
+    <select id="selectUserAccountList" parameterType="UserAccount" resultMap="UserAccountResult">
+        <include refid="selectUserAccountVo"/>
+        <where>  
+            <if test="userid != null "> and userId = #{userid}</if>
+            <if test="accountid != null "> and accountId = #{accountid}</if>
+            <if test="accountname != null  and accountname != ''"> and accountName like concat('%', #{accountname}, '%')</if>
+            <if test="info != null  and info != ''"> and info = #{info}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserAccountByUserid" parameterType="Long" resultMap="UserAccountResult">
+        <include refid="selectUserAccountVo"/>
+        where accountId = #{accountid}
+    </select>
+        
+    <insert id="insertUserAccount" parameterType="UserAccount">
+        insert into user_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userid != null">userId,</if>
+            <if test="accountid != null">accountId,</if>
+            <if test="accountname != null">accountName,</if>
+            <if test="info != null">info,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userid != null">#{userid},</if>
+            <if test="accountid != null">#{accountid},</if>
+            <if test="accountname != null">#{accountname},</if>
+            <if test="info != null">#{info},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserAccount" parameterType="UserAccount">
+        update user_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountname != null">accountName = #{accountname},</if>
+            <if test="info != null">info = #{info},</if>
+        </trim>
+        where userId = #{userid} and accountId = #{accountid}
+    </update>
+
+    <delete id="deleteUserAccountByAccountid" parameterType="Long">
+        delete from user_account where accountId = #{accountid}
+    </delete>
+
+    <delete id="deleteUserAccountByUserids" parameterType="String">
+        delete from user_account where userId in 
+        <foreach item="userid" collection="array" open="(" separator="," close=")">
+            #{userid}
+        </foreach>
+    </delete>
+</mapper>

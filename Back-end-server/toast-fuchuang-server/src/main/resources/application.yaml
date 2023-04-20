@@ -1,0 +1,94 @@
+server:
+  port: 8002
+# ActuatorWeb访问端口
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    health:
+      show-details: always
+
+
+spring:
+  application:
+    name: toast-fuchuang-service
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 1.15.179.24:8848 #配置Nacos地址
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+    driver-class-name: com.mysql.jdbc.Driver             # mysql驱动包 com.mysql.jdbc.Driver org.gjt.mm.mysql.Driver
+    url: jdbc:mysql://1.15.179.24:3306/fuchuang?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: 689692630
+
+  redis:
+    host: 1.15.179.24
+    port: 6377
+    password: 689692630
+    lettuce:
+      shutdown-timeout: 0ms
+      pool:
+        MaxTotal: 20 #最大连接数
+        minIdle: 1
+        maxWaitMillis: 5000
+        maxIdle: 5
+        testOnBorrow: true
+        testOnReturn: true
+        testWhileIdle: true
+
+  #上传文件大小限制
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+
+#设置feign客户端超时时间(OpenFeign默认支持ribbon)
+ribbon:
+  #指的是建立连接所用的时间，适用于网络状况正常的情况下,两端连接所用的时间
+  ReadTimeout: 5000
+  #指的是建立连接后从服务器读取到可用资源所用的时间
+  ConnectTimeout: 5000
+
+logging:
+  level:
+    # feign日志以什么级别监控哪个接口
+    com.atguigu.springcloud.service.PaymentFeignService: debug
+
+
+file:
+  ###静态资源对外暴露的访问路径
+  staticAccessPath: /api/file/**
+  ###静态资源实际存储路径  如果没有结尾的 / 就404
+#  uploadFolder: E:///fuchuangUser/photo/
+  uploadFolder: /home/UploadFiles/
+
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+  type-aliases-package: com.toast.fuchuang.domain   # 所有Entity别名类所在包
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countsql
+
+toast:
+  pythonServerUrl: http://127.0.0.1:8003/getPhotoJson
+  pythonAiServerUrl: http://127.0.0.1:8003/getOpenAIJson
+#  pythonUserTabServerUrl: http://127.0.0.1:8003/getUserTab  47.108.202.105
+  pythonUserTabServerUrl: http://47.108.202.105:8003/getUserTab
+
+  api:
+    url: https://openai.api2d.net/v1/chat/completions
+    key: fk188250-XvJCGzMDdOvlI1HmIewWQ82iyqwrCz5L
+    model: gpt-3.5-turbo
+
+

@@ -1,0 +1,14 @@
+spring:
+  #上传文件大小限制
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+
+file:
+  ###静态资源对外暴露的访问路径
+  staticAccessPath: /api/file/**
+  ###静态资源实际存储路径  如果没有结尾的 / 就404
+  uploadFolder: E:///fuchuangUser/photo/
+#  uploadFolder: /home/UploadFiles/

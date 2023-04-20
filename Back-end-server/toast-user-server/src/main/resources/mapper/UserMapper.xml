@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toast.work.mapper.UserMapper">
+    
+    <resultMap type="User" id="UserResult">
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="password"    column="password"    />
+        <result property="visible"    column="visible"    />
+        <result property="avatarUrl"    column="avatar_url"    />
+        <result property="gender"    column="gender"    />
+        <result property="age"    column="age"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select user_id, user_name, nick_name, phone_number,password,avatar_url,gender,age,create_time from fuchuang_user
+    </sql>
+
+    <select id="selectUserList" parameterType="User" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="nickName != null  and nickName != ''"> and nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+            <if test="visible != null "> and visible = #{visible}</if>
+            <if test="avatarUrl != null  and avatarUrl != ''"> and avatar_url = #{avatarUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserByUserId" parameterType="Long" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <select id="selectUserByUserName" parameterType="string" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        where user_name = #{userName}
+    </select>
+    <insert id="insertUser" parameterType="User">
+        insert into fuchuang_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="nickName != null and nickName != ''">nick_name,</if>
+            <if test="phoneNumber != null">phone_number,</if>
+            <if test="password != null">password,</if>
+            <if test="visible != null">visible,</if>
+            <if test="avatarUrl != null">avatar_url,</if>
+            <if test="gender != null">gender,</if>
+            <if test="age != null">age,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="nickName != null and nickName != ''">#{nickName},</if>
+            <if test="phoneNumber != null">#{phoneNumber},</if>
+            <if test="password != null">#{password},</if>
+            <if test="visible != null">#{visible},</if>
+            <if test="avatarUrl != null">#{avatarUrl},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="age != null">#{age},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUser" parameterType="User">
+        update fuchuang_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
+            <if test="phoneNumber != null">phone_number = #{phoneNumber},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="visible != null">visible = #{visible},</if>
+            <if test="avatarUrl != null">avatar_url = #{avatarUrl},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null">gender = #{gender},</if>
+        </trim>
+        where user_id = #{userId} and visible=1
+    </update>
+
+    <delete id="deleteUserByUserId" parameterType="Long">
+        delete from fuchuang_user where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteUserByUserIds" parameterType="String">
+        delete from fuchuang_user where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <select id="checkPhoneUnique" parameterType="String" resultMap="UserResult">
+        select user_id, phone_number from fuchuang_user where phone_number = #{phoneNumber} and visible=1
+    </select>
+
+    <select id="checkExistUser" parameterType="String" resultMap="UserResult">
+        select user_id, user_name from fuchuang_user where user_name = #{userName} and visible=1
+    </select>
+
+    <select id="getUserIdByOpenId" parameterType="String" resultType="long">
+        select user_id from userid_wxopenid where open_id = #{openId} and visible=1
+    </select>
+
+    <select id="getOpenIdByUserId" parameterType="long" resultType="string">
+        select open_id from userid_wxopenid where user_id = #{userId} and visible=1
+    </select>
+
+    <insert id="insertUserOpenId" >
+        insert into userid_wxopenid(user_id,open_id) values(#{userId},#{openId})
+    </insert>
+
+</mapper>

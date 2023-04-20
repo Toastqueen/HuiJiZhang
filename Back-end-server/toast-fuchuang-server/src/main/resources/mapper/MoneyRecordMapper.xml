@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toast.fuchuang.mapper.MoneyRecordMapper">
+
+    <resultMap type="MoneyRecord" id="MoneyRecordResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="typeId"    column="type_id"    />
+        <result property="money"    column="money"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="seller"    column="seller"    />
+        <result property="visible"    column="visible"    />
+        <result property="info"    column="info"    />
+        <result property="parentId"    column="parent_id"    />
+    </resultMap>
+
+    <sql id="selectMoneyRecordVo">
+        select id, user_id, type_id, money, create_time ,remark, seller,info,parent_id from money_record
+    </sql>
+
+    <select id="selectMoneyRecordList" parameterType="MoneyRecord" resultMap="MoneyRecordResult">
+        <include refid="selectMoneyRecordVo"/>
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="typeId != null "> and type_id = #{typeId}</if>
+            <if test="money != null "> and money = #{money}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="seller != null  and seller != ''"> and seller = #{seller}</if>
+            <if test="visible != null "> and visible = 1</if>
+            <if test="info != null  and info != ''"> and info = #{info}</if>
+            <if test="parentId != null  and parentId != ''"> and parent_id = #{parentId}</if>
+             and visible = 1
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectMonthMoneyRecordList"  resultMap="MoneyRecordResult">
+        <include refid="selectMoneyRecordVo"/>
+        where visible = 1 and date_format(create_time, '%m') =#{month} and date_format(create_time, '%Y') = #{year} and user_id = #{userId}
+    </select>
+
+
+    <select id="selectYearMoneyRecordList"  resultMap="MoneyRecordResult">
+        <include refid="selectMoneyRecordVo"/>
+        where visible = 1 and date_format(create_time, '%Y') = #{year}  and user_id = #{userId}
+    </select>
+
+    <select id="selectMoneyRecordById" parameterType="Long" resultMap="MoneyRecordResult">
+        <include refid="selectMoneyRecordVo"/>
+        where id = #{id} and visible = 1
+    </select>
+
+    <insert id="insertMoneyRecord" parameterType="MoneyRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into money_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">id,</if>
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="typeId != null">type_id,</if>
+            <if test="money != null">money,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="seller != null">seller,</if>
+            <if test="visible != null">visible,</if>
+            <if test="info != null">info,</if>
+            <if test="parentId != null">parent_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">#{id},</if>
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="money != null">#{money},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="seller != null">#{seller},</if>
+            <if test="visible != null">1,</if>
+            <if test="info != null">#{info},</if>
+            <if test="parentId != null">#{parentId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMoneyRecord" parameterType="MoneyRecord">
+        update money_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="typeId != null">type_id = #{typeId},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="seller != null">seller = #{seller},</if>
+            <if test="info != null">info = #{info},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+        </trim>
+        where id = #{id} and visible=1
+    </update>
+
+
+    <update id="deleteMoneyRecord" parameterType="Long">
+        update money_record set visible=0
+        where id = #{id}
+    </update>
+
+
+    <update id="deleteMoneyRecordByIds" parameterType="String">
+        update money_record set visible=0 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--    若年份为0则查询所有总和-->
+    <sql id="timeSelect">
+        <choose>
+            <when test="year != 0">date_format(create_time, '%Y') = #{year} </when>
+            <when test="year==0">#{year}=0</when>
+        </choose>
+        and <include refid="NoMonth"></include>
+    </sql>
+    <!--    若月份为0则查询该年份所有总和-->
+    <sql id="NoMonth">
+        <choose>
+            <when test="month != 0">date_format(create_time, '%m') =#{month} </when>
+            <when test="month==0">#{month}=0</when>
+        </choose>
+    </sql>
+
+    <select id="GetPaymentMoneyByMonth" resultType="decimal">
+        select coalesce(sum(money),0)As money_counts
+        from money_record
+        WHERE user_id=#{userId} and date_format(create_time, '%m') =#{month} and visible=1 and
+              (type_id in (select type_id from money_type WHERE record_type=1 and visible=1) or type_id in
+                                                                                               (select type_id from relationship_user_type WHERE  user_id=#{userId} and record_type=1 and visible=1))
+    </select>
+
+    <select id="GetIncomeMoneyByMonth" resultType="decimal">
+        select coalesce(sum(money),0)As money_counts
+        from money_record
+        WHERE user_id=#{userId} and date_format(create_time, '%m') =#{month} and visible=1 and
+              (type_id in (select type_id from money_type WHERE record_type=0 and visible=1) or type_id in
+                                                                                               (select type_id from relationship_user_type WHERE user_id=#{userId} and record_type=0 and visible=1))
+    </select>
+
+    <select id="GetIncomeMoneyByTime" resultType="decimal">
+        select coalesce(sum(money),0)As money_counts
+        from money_record mr
+        WHERE mr.user_id=#{userId}
+        and date_format(create_time, '%Y-%m-%d') <![CDATA[>=]]> #{startTime}
+            AND date_format(create_time, '%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+        and mr.visible=1
+        and (type_id in (select type_id from money_type WHERE record_type=0 and visible=1) or type_id in
+        (select type_id from relationship_user_type WHERE user_id=#{userId} and record_type=0 and visible=1))
+    </select>
+
+    <select id="GetPaymentMoneyByTime" resultType="decimal">
+        select coalesce(sum(money),0)As money_counts
+        from money_record mr
+        WHERE mr.user_id=#{userId}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[>=]]> #{startTime}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+            and mr.visible=1
+            and (type_id in (select type_id from money_type WHERE record_type=1 and visible=1) or type_id in
+                                                                                                 (select type_id from relationship_user_type WHERE user_id=#{userId} and record_type=1 and visible=1))
+    </select>
+
+    <select id="getIncomeTotalDetailsGroupByTId" resultType="map">
+        select coalesce(sum(money),0)As money_counts,type_id
+        from money_record mr
+        WHERE mr.user_id=#{userId}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[>=]]> #{startTime}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+            and mr.visible=1
+            and (type_id in (select type_id from money_type WHERE record_type=0 and visible=1) or type_id in
+            (select type_id from relationship_user_type WHERE user_id=#{userId} and record_type=0 and visible=1))
+        group by type_id;
+
+    </select>
+
+    <select id="getIncomeTotalDetailsGroupByPId" resultType="map">
+        select coalesce(sum(money),0)As money_counts,parent_id
+        from money_record mr
+        WHERE mr.user_id=#{userId}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[>=]]> #{startTime}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+            and mr.visible=1
+            and (type_id in (select type_id from money_type WHERE record_type=0 and visible=1) or type_id in
+                                                                                                 (select type_id from relationship_user_type WHERE user_id=#{userId} and record_type=0 and visible=1))
+        group by parent_id;
+
+    </select>
+
+    <select id="getPaymentTotalDetailsGroupByTId" resultType="map">
+        select coalesce(sum(money),0)As money_counts,type_id
+        from money_record mr
+        WHERE mr.user_id=#{userId}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[>=]]> #{startTime}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+            and mr.visible=1
+            and (type_id in (select type_id from money_type WHERE record_type=1 and visible=1) or type_id in
+                                                                                                 (select type_id from relationship_user_type WHERE user_id=#{userId} and record_type=1 and visible=1))
+        group by type_id;
+
+    </select>
+
+    <select id="getPaymentTotalDetailsGroupByPId" resultType="map">
+
+        select coalesce(sum(money),0)As money_counts,parent_id
+        from money_record mr
+        WHERE mr.user_id=#{userId}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[>=]]> #{startTime}
+            and date_format(create_time, '%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+            and mr.visible=1
+            and (type_id in (select type_id from money_type WHERE record_type=1 and visible=1) or type_id in
+                                                                                                 (select type_id from relationship_user_type WHERE user_id=#{userId} and record_type=1 and visible=1))
+        group by parent_id;
+    </select>
+
+    <select id="excelMoneyRecordByMonth" resultMap="MoneyRecordResult">
+        <include refid="selectMoneyRecordVo"/>
+        where user_id = #{userId} and date_format(create_time, '%m') =#{month} and visible = 1
+
+    </select>
+
+    <select id="excelMoneyRecordByYear" resultMap="MoneyRecordResult">
+        <include refid="selectMoneyRecordVo"/>
+        where user_id = #{userId} and date_format(create_time, '%Y') =#{year} and visible = 1
+    </select>
+
+    <select id="getMoneyByTypeIdCurrentMonth" resultType="decimal">
+        SELECT SUM(money) money FROM money_record WHERE user_id = #{userId} AND type_id = #{typeId} and date_format(create_time, '%m') =#{month} and date_format(create_time, '%Y') = #{year} AND visible=1
+    </select>
+
+    <select id="getMoneyByParentIdCurrentMonth" resultType="decimal">
+        SELECT coalesce(sum(money),0)As money_counts FROM money_record
+        WHERE user_id = #{userId}  AND  date_format(create_time, '%m') =#{month} and date_format(create_time, '%Y') = #{year} AND visible=1
+          and type_id in (select type_id from money_type WHERE record_type=1 and visible=1 and money_type.parent_id=#{parentId})
+    </select>
+
+</mapper>

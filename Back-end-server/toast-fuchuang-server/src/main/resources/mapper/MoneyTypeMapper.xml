@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toast.fuchuang.mapper.MoneyTypeMapper">
+
+    <resultMap id="MoneyTypeMap" type="com.toast.fuchuang.domain.MoneyType">
+        <result property="typeId"    column="type_id"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="contentsType"    column="contents_type"    />
+        <result property="visible"    column="visible"    />
+        <result property="recordType"    column="record_type"    />
+
+    </resultMap>
+<!--    通过id查询该类型信息-->
+    <select id="selectMoneyTypeInfoById" resultType="map" parameterType="long">
+        select type_name,parent_id,record_type,contents_type from money_type where type_id=#{typeId} and visible=1
+    </select>
+
+    <!--    通过类型名查询该类型id-->
+    <select id="selectMoneyTypeIdByName" resultType="long" parameterType="string">
+        select type_id from money_type where type_name=#{typeName} and visible=1
+    </select>
+
+    <!--    通过id查询用户新建类型信息-->
+    <select id="selectMoneyNewTypeInfoById" resultType="map" parameterType="long">
+        select type_name,parent_id,record_type,contents_type from relationship_user_type where type_id=#{typeId} and visible=1
+    </select>
+
+    <select id="getAllTypeId" resultType="long">
+        select type_id from money_type where visible=1;
+    </select>
+
+
+    <!-- 查出用户目前可操作的金额类型 去除用户删除的-->
+    <select id="selectMoneyTypeList" parameterType="long" resultMap="MoneyTypeMap">
+        select mt.type_id,mt.type_name,mt.contents_type,mt.record_type,mt.parent_id
+        from money_type mt where visible=1 and mt.type_id not in
+        (select rut.type_id from relationship_user_type rut where  flag =0 and user_id=#{userId} and visible = 1)
+
+    </select>
+
+  <!--   查询用户添加的类型-->
+    <select id="selectMoneyTypeNewAddList" parameterType="long" resultMap="MoneyTypeMap">
+        select type_id,type_name,parent_id,record_type,contents_type from relationship_user_type where user_id=#{userId} and visible=1 and flag=1
+
+    </select>
+
+
+
+    <insert id="insertType"  parameterType="com.toast.fuchuang.domain.RTypeUser" useGeneratedKeys="true" keyProperty="id">
+        insert into relationship_user_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="typeId != null">type_id,</if>
+            <if test="typeName != null">type_name,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="flag != null">flag,</if>
+            <if test="visible != null">visible,</if>
+            <if test="recordType != null">record_type,</if>
+            <if test="contentsType != null">contents_type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="typeName != null">#{typeName},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="flag != null">#{flag},</if>
+            <if test="visible != null">1,</if>
+            <if test="recordType != null">#{recordType},</if>
+            <if test="contentsType != null">#{contentsType},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTypeFlagFalse" parameterType="com.toast.fuchuang.domain.MoneyType">
+        update relationship_user_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="flag != null">flag = #{flag},</if>
+        </trim>
+        where user_id = #{userId} and type_id=#{typeId}
+    </update>
+
+
+</mapper>

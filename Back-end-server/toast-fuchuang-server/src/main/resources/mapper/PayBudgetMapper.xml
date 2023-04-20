@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.toast.fuchuang.mapper.PayBudgetMapper">
+    
+    <resultMap type="PayBudget" id="PayBudgetResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="typeBudget"    column="type_budget"    />
+        <result property="typeId"    column="type_id"    />
+        <result property="allBudget"    column="all_budget"    />
+        <result property="monthYear"    column="month_year"    />
+        <result property="visible"    column="visible"    />
+    </resultMap>
+
+    <sql id="selectPayBudgetVo">
+        select id,user_id, type_budget, type_id, month_year from pay_budget
+    </sql>
+
+    <select id="selectPayBudgetList"  resultMap="PayBudgetResult">
+        <include refid="selectPayBudgetVo"/>
+        where month_year = 1 and visible = 1 and user_id = #{userId}
+    </select>
+
+    <select id="selectPayBudgetListOFYear"  resultMap="PayBudgetResult">
+        <include refid="selectPayBudgetVo"/>
+        where month_year = 0 and visible = 1 and user_id = #{userId}
+    </select>
+    
+    <select id="selectPayBudgetById" parameterType="Long" resultMap="PayBudgetResult">
+        <include refid="selectPayBudgetVo"/>
+        where id = #{id} and visible = 1
+    </select>
+        
+    <insert id="insertPayBudget" parameterType="PayBudget">
+        insert into pay_budget
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="typeBudget != null">type_budget,</if>
+            <if test="typeId != null">type_id,</if>
+            <if test="allBudget != null">all_budget,</if>
+            <if test="monthYear != null">month_year,</if>
+            <if test="visible != null">visible,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="typeBudget != null">#{typeBudget},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="allBudget != null">#{allBudget},</if>
+            <if test="monthYear != null">#{monthYear},</if>
+            <if test="visible != null">#{visible},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertallPayBudget" >
+        insert into user_budget values(#{userId}, #{monthBudget},#{yearBudget})
+    </insert>
+
+    <update id="updatePayBudget" parameterType="PayBudget">
+        update pay_budget
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="typeBudget != null">type_budget = #{typeBudget},</if>
+            <if test="typeId != null">type_id = #{typeId},</if>
+            <if test="allBudget != null">all_budget = #{allBudget},</if>
+            <if test="monthYear != null">month_year = #{monthYear},</if>
+            <if test="visible != null">visible = #{visible},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateAllPayBudget">
+        update user_budget set month_budget =#{monthBudget}, year_budget= #{yearBudget}
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deletePayBudgetByUserId" parameterType="Long">
+        delete from pay_budget where id = #{id}
+    </delete>
+
+    <delete id="deletePayBudgetByUserIds" parameterType="String">
+        delete from pay_budget where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+</mapper>
