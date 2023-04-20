@@ -10,7 +10,39 @@
 
 ## 二.前端部署
 
+建议在2.9+以上版本的HBuilderXHbuilderx中创建uniapp项目使用。
 
+### 环境配置
+
+npm i vuex-persistedstate
+
+### App模块配置
+
+app包含的扩展模块（影响包体积）。云打包后生效。本地打包需另行在原生工程中配置
+
+#### 打包模块配置
+
+勾选 Camera&Gallery(相机和相册)
+
+勾选 OAuth(登录鉴权)
+
+### App组件引入
+
+在Dcloud市场导入秋云 ucharts echarts 高性能跨全端图表组件
+
+https://www.npmjs.com/~qiun
+
+在Dcloud市场导入uView2.0
+
+https://www.npmjs.com/package/uview-ui
+
+在Dcloud市场导入less编译
+
+在Dcloud市场导入scss/sass编译
+
+### 打包注意
+
+如果采用ios打包需要苹果开发者证书
 
 ## 三.后端部署
 
@@ -40,7 +72,7 @@
 - 确保有正确的环境依赖
   - 详情见  [环境依赖](#四.环境依赖)
 
-1. 创建数据库`HuiJiZhang`后，导入脚本`database.sql`
+1. 创建数据库`HuiJiZhang`，导入脚本`database.sql`
 2. SpringBoot工程运行：(可自行打包运行)
    1. ` .\HuiJiZhang\Back-end-server\toast-user-server\src\main\java\com\toast\work\ToastUserServer`
    2. ` .\HuiJiZhang\Back-end-server\toast-fuchuang-server\src\main\java\com\toast\fuchuang\ToastFuchuangServer`
@@ -124,7 +156,7 @@
       # 胶水层ai服务地址
       pythonAiServerUrl: http://127.0.0.1:8003/getOpenAIJson
       # 胶水层用户画像 服务地址
-      pythonUserTabServerUrl: http://127.0.0.1.105:8003/getUserTab
+      pythonUserTabServerUrl: http://47.108.202.105:8003/getUserTab
     
       api:
         url: https://openai.api2d.net/v1/chat/completions
@@ -178,7 +210,7 @@
       # 胶水层ai服务地址
       pythonAiServerUrl: http://127.0.0.1:8003/getOpenAIJson
       # 胶水层用户画像 服务地址
-      pythonUserTabServerUrl: http://127.0.0.1:8003/getUserTab
+      pythonUserTabServerUrl: http://47.108.202.105:8003/getUserTab
     
       api:
         url: https://openai.api2d.net/v1/chat/completions
