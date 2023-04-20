@@ -19,19 +19,18 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 1.15.179.24:8848 #配置Nacos地址
+        server-addr:  #配置Nacos地址
 
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
     driver-class-name: com.mysql.jdbc.Driver             # mysql驱动包 com.mysql.jdbc.Driver org.gjt.mm.mysql.Driver
-    url: jdbc:mysql://1.15.179.24:3306/fuchuang?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    url: 
     username: root
-    password: 689692630
+    password: 
 
   redis:
-    host: 1.15.179.24
-    port: 6377
-    password: 689692630
+    host:
+    port: 
     lettuce:
       shutdown-timeout: 0ms
       pool:
@@ -67,8 +66,7 @@ file:
   ###静态资源对外暴露的访问路径
   staticAccessPath: /api/file/**
   ###静态资源实际存储路径  如果没有结尾的 / 就404
-#  uploadFolder: E:///fuchuangUser/photo/
-  uploadFolder: /home/UploadFiles/
+  uploadFolder: 
 
 mybatis:
   mapperLocations: classpath:mapper/*.xml
@@ -84,11 +82,11 @@ toast:
   pythonServerUrl: http://127.0.0.1:8003/getPhotoJson
   pythonAiServerUrl: http://127.0.0.1:8003/getOpenAIJson
 #  pythonUserTabServerUrl: http://127.0.0.1:8003/getUserTab  47.108.202.105
-  pythonUserTabServerUrl: http://47.108.202.105:8003/getUserTab
+  pythonUserTabServerUrl: http://127.0.0.1:8003/getUserTab
 
   api:
     url: https://openai.api2d.net/v1/chat/completions
-    key: fk188250-XvJCGzMDdOvlI1HmIewWQ82iyqwrCz5L
-    model: gpt-3.5-turbo
+    key: 
+    model: 
 
 
