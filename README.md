@@ -40,7 +40,7 @@
 - 确保有正确的环境依赖
   - 详情见  [环境依赖](#四.环境依赖)
 
-1. 创建数据库`HuiJiZhang`，导入脚本`database.sql`
+1. 创建数据库`HuiJiZhang`后，导入脚本`database.sql`
 2. SpringBoot工程运行：(可自行打包运行)
    1. ` .\HuiJiZhang\Back-end-server\toast-user-server\src\main\java\com\toast\work\ToastUserServer`
    2. ` .\HuiJiZhang\Back-end-server\toast-fuchuang-server\src\main\java\com\toast\fuchuang\ToastFuchuangServer`
