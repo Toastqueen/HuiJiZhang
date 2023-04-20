@@ -124,7 +124,7 @@
       # 胶水层ai服务地址
       pythonAiServerUrl: http://127.0.0.1:8003/getOpenAIJson
       # 胶水层用户画像 服务地址
-      pythonUserTabServerUrl: http://47.108.202.105:8003/getUserTab
+      pythonUserTabServerUrl: http://127.0.0.1.105:8003/getUserTab
     
       api:
         url: https://openai.api2d.net/v1/chat/completions
@@ -178,7 +178,7 @@
       # 胶水层ai服务地址
       pythonAiServerUrl: http://127.0.0.1:8003/getOpenAIJson
       # 胶水层用户画像 服务地址
-      pythonUserTabServerUrl: http://47.108.202.105:8003/getUserTab
+      pythonUserTabServerUrl: http://127.0.0.1:8003/getUserTab
     
       api:
         url: https://openai.api2d.net/v1/chat/completions
